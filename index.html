@@ -1,0 +1,419 @@
+﻿<!DOCTYPE HTML>
+
+<html>
+<head>
+    <title>Popi Database</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes" /> <!-- This makes the website scalable-->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+<body class="is-preload">
+
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+
+
+            <div class="inner">
+                <h1> <u><b>Charlene Otto</b></u> </h1>
+                <h2>Poppi Database</h2>
+                <p>Here you can safely view and upload personal information.</p>
+                <span class="image main"><img src="images/pic007.jpeg" alt="" /></span>
+            </div>
+
+            <nav>
+
+                <ul>
+                    <li><a href="#login">Login</a></li>
+                    <li><a href="#view">View records</a></li>
+                    <li><a href="#upload">Upload new records</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+
+
+                </ul>
+            </nav>
+
+        </header>
+
+        <!-- Main -->
+        <div id="main">
+
+            <!-- Login -->
+            <article id="login">
+                <h2 class="major">Login:</h2>
+
+                <!-- Login Form -->
+
+                <form id="login-form">
+                    <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Email Address">
+                    <br>
+                    <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+                    <br>
+                    <input type="submit" value="Login" id="login-form-submit">
+                </form>
+
+
+                <script>
+                    const loginForm = document.getElementById("login-form");
+                    const loginButton = document.getElementById("login-form-submit");
+                    const loginErrorMsg = document.getElementById("login-error-msg");
+
+                    loginButton.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const username = loginForm.username.value;
+                        const password = loginForm.password.value;
+
+                        if (username === "user" && password === "123") {
+                            alert("You have successfully logged in.");
+                            
+                        } else {
+                            alert("Invalid username or password.");
+                        }
+                    })
+
+                </script>
+
+
+            </article>
+
+
+
+            <!-- view -->
+            <article id="view">
+                <h2 class="major">View Records:</h2>
+                <p>
+                    You are currently logged in as admin.
+                </p>
+                <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQhMrAfnh9w88X018zCMCgwlaHZj8CX7B_AiVZqQ56YCLq8_lkQOL8IbUUT1i-tvuD1kF4y87EBkcKc/pubhtml?widget=true&amp;headers=false" width="700" height="300"></iframe>
+
+
+            </article>
+
+
+            <!-- TEXTupload -->
+            <article id="text">
+                <h2 class="major">Text file upload: </h2>
+                <p>
+                    Here you can upload a file containing your data.
+                </p>
+                Rembere to verify that the data displayed is correct. In the event that the data displayed is incorrect
+                please correct it on the textbox direclty. Once you have finished verifying your data click the
+                save button, at the bottem of the screen, to process the data. <br> <br>
+
+
+
+                <form enctype="multipart/form-data">
+                    <input id="upload" type=file accept="text/html" name="files[]" size=30>
+
+                </form>
+
+                <textarea class="form-control" rows=10 cols=80 id="ms_word_filtered_html"></textarea>
+                <br>
+
+                Save and continue? <br>
+                <button onclick="store()">Save</button>
+
+
+
+                <script>
+
+                    function handleFileSelect(evt) {
+                        var files = evt.target.files; // FileList object
+
+                        // use the 1st file from the list
+                        f = files[0];
+
+                        var reader = new FileReader();
+
+                        // Closure to capture the file information.
+                        reader.onload = (function (theFile) {
+                            return function (e) {
+
+                                jQuery('#ms_word_filtered_html').val(e.target.result);
+                            };
+                        })(f);
+
+                        // Read in the image file as a data URL.
+                        reader.readAsText(f);
+                    }
+
+                    document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+                </script>
+
+
+            </article>
+
+
+
+
+
+
+
+            <!-- EXCELLupload -->
+            <article id="Excell">
+                <h2 class="major">Upload new Records: </h2>
+
+                <p>
+                    Here you can upload a file containing your data.
+                </p>
+
+
+                <input type="file" id="excelfile" />
+                <input type="button" id="viewfile" value="Export To Table" onclick="ExportToTable()" />
+                <br />
+                <br />
+                <br>
+                <table id="exceltable" class="table table-bordered table-condensed table-striped">
+                </table> <br>
+                <button onclick="store()">Save</button>
+
+
+
+
+                <script src="jquery-1.10.2.min.js" type="text/javascript"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.7/xlsx.core.min.js"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/xls/0.7.4-a/xls.core.min.js"></script>
+                <script src="hoop2/services.cs"></script>
+
+                <script>
+                    function BindTable(jsondata, tableid) {/*Function used to convert the JSON array to Html Table*/
+                        var columns = BindTableHeader(jsondata, tableid); /*Gets all the column headings of Excel*/
+                        for (var i = 0; i < jsondata.length; i++) {
+                            var row$ = $('<tr/>');
+                            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                                var cellValue = jsondata[i][columns[colIndex]];
+                                if (cellValue == null)
+                                    cellValue = "";
+                                row$.append($('<td/>').html(cellValue));
+                            }
+                            $(tableid).append(row$);
+                        }
+                    }
+                    function BindTableHeader(jsondata, tableid) {/*Function used to get all column names from JSON and bind the html table header*/
+                        var columnSet = [];
+                        var headerTr$ = $('<tr/>');
+                        for (var i = 0; i < jsondata.length; i++) {
+                            var rowHash = jsondata[i];
+                            for (var key in rowHash) {
+                                if (rowHash.hasOwnProperty(key)) {
+                                    if ($.inArray(key, columnSet) == -1) {/*Adding each unique column names to a variable array*/
+                                        columnSet.push(key);
+                                        headerTr$.append($('<th/>').html(key));
+                                    }
+                                }
+                            }
+                        }
+                        $(tableid).append(headerTr$);
+                        return columnSet;
+                    }</script>
+
+                <script>
+                    function ExportToTable() {
+                        var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;
+                        /*Checks whether the file is a valid excel file*/
+                        if (regex.test($("#excelfile").val().toLowerCase())) {
+                            var xlsxflag = false; /*Flag for checking whether excel is .xls format or .xlsx format*/
+                            if ($("#excelfile").val().toLowerCase().indexOf(".xlsx") > 0) {
+                                xlsxflag = true;
+                            }
+                            /*Checks whether the browser supports HTML5*/
+                            if (typeof (FileReader) != "undefined") {
+                                var reader = new FileReader();
+                                reader.onload = function (e) {
+                                    var data = e.target.result;
+                                    /*Converts the excel data in to object*/
+                                    if (xlsxflag) {
+                                        var workbook = XLSX.read(data, { type: 'binary' });
+                                    }
+                                    else {
+                                        var workbook = XLS.read(data, { type: 'binary' });
+                                    }
+                                    /*Gets all the sheetnames of excel in to a variable*/
+                                    var sheet_name_list = workbook.SheetNames;
+
+                                    var cnt = 0; /*This is used for restricting the script to consider only first sheet of excel*/
+                                    sheet_name_list.forEach(function (y) { /*Iterate through all sheets*/
+                                        /*Convert the cell value to Json*/
+                                        if (xlsxflag) {
+                                            var exceljson = XLSX.utils.sheet_to_json(workbook.Sheets[y]);
+                                        }
+                                        else {
+                                            var exceljson = XLS.utils.sheet_to_row_object_array(workbook.Sheets[y]);
+                                        }
+                                        if (exceljson.length > 0 && cnt == 0) {
+                                            BindTable(exceljson, '#exceltable');
+                                            cnt++;
+                                        }
+                                    });
+                                    $('#exceltable').show();
+                                }
+                                if (xlsxflag) {/*If excel file is .xlsx extension than creates a Array Buffer from excel*/
+                                    reader.readAsArrayBuffer($("#excelfile")[0].files[0]);
+                                }
+                                else {
+                                    reader.readAsBinaryString($("#excelfile")[0].files[0]);
+                                }
+                            }
+                            else {
+                                alert("Sorry! Your browser does not support HTML5!");
+                            }
+                        }
+                        else {
+                            alert("Please upload a valid Excel file!");
+                        }
+                    }</script>
+
+
+            </article>
+
+
+
+
+
+
+            <!-- Upload -->
+            <article id="upload">
+                <h2 class="major">Upload new Records: </h2>
+
+                <p>
+                    Here you can upload a file containing your data.
+                </p>
+
+
+                Select The type of file you want to upload:<br>
+
+                <nav>
+
+                    <ul>
+                        <li><a href="#text">Text File</a></li>
+                        <li><a href="#Excell">Excell File</a></li>
+                        <li><a href="#PDF">PDF File</a></li>
+
+                    </ul>
+                </nav>
+
+
+
+
+
+            </article>
+
+
+
+
+
+            <!-- About -->
+            <article id="about">
+                <h2 class="major">About:</h2>
+
+                <!-- Youtube API -->
+                <h3>  <b>What is the Popi act?</b> </h3>
+                <p>
+                    In simple terms, the purpose of the PoPI Act is to ensure that all South African institutions
+                    conduct themselves in a responsible manner when collecting, processing, storing and sharing
+                    another entity’s personal information by holding them accountable should they abuse or compromise
+                    your personal information in any way. The PoPI legislation basically considers your personal information
+                    to be “precious goods” and therefore aims to bestow upon you, as the owner of your personal information,
+                    certain rights of protection
+                </p>
+
+                <p>The video belowe will give a general idea of what the Popi Act intales: </p>
+
+
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/yCGu3cEhS_A" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+
+
+
+                <p> Note: the video will continue to play if you leave this tab.</p>
+
+
+
+            </article>
+
+
+            <!-- Contact -->
+            <article id="contact">
+
+                <h2 class="major">Contact:</h2>
+                <span class="image main"><img src="images/pic005.jpg" alt="" /></span>
+                <!-- Contact Me -->
+                <h3>
+                    <b>Contact Information:</b> <h3>
+                        <p>
+                            <b>Contact Number: </b> (+27)82 420 2963 <br>
+                            <b>Email:</b> charleneotto116@gmail.com <br>
+                            <b>Address:</b> Westuis St, Van Riebeeck Park, Kempton Park, 1629
+                        </p>
+
+                        <!-- Email Me -->
+                        <h3>
+                            Send an Email: <h3>
+                                <form action="mailto:charleneotto116@gmail.com" method="post" enctype="text/plain">
+                                    <div class="fields">
+                                        <div class="field half">
+                                            <label for="name">Name</label>
+                                            <input type="text" name="name" id="name" />
+                                        </div>
+                                        <div class="field half">
+                                            <label for="email">Email</label>
+                                            <input type="text" name="email" id="email" />
+                                        </div>
+                                        <div class="field ">
+                                            <label for="subject">Subject</label>
+                                            <input type="text" name="subject" id="subject" />
+                                        </div>
+                                        <div class="field">
+                                            <label for="message">Message</label>
+                                            <textarea name="message" id="message" rows="4"></textarea>
+                                        </div>
+                                    </div>
+                                    <ul class="actions">
+                                        <li><input type="submit" value="Send Message" class="primary" /></li>
+                                        <li><input type="reset" value="Reset" /></li>
+                                    </ul>
+                                </form>
+                                <!-- social Medial -->
+                                <h3> Social Media: </h3>
+                                <ul class="icons">
+                                    <li><a href="https://www.facebook.com/charlene.otto.7" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+                                    <li><a href="https://www.instagram.com/kleintjie116/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+                                    <li><a href="https://www.linkedin.com/in/charlene-otto-79a8071b2" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+                                    <li><a href="https://github.com/charleneotto116" class="icon brands fa-github"><span class="label">Github</span></a></li>
+                                </ul>
+            </article>
+
+
+
+
+
+
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+
+            <p>Here we strive to secure your personal information.</p>
+
+        </footer>
+
+    </div>
+
+    <!-- BackGround -->
+    <div id="bg"></div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+                <script src="assets/js/browser.min.js"></script>
+                <script src="assets/js/breakpoints.min.js"></script>
+                <script src="assets/js/util.js"></script>
+                <script src="assets/js/main.js"></script>
+
+</body>
+</html>
